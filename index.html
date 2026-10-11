@@ -1,0 +1,796 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b14">
+<title>ZEROX NET — Hosting Dashboard</title>
+
+<style>
+:root {
+  --bg:#080b14;
+  --panel:#101625;
+  --line:#263149;
+  --text:#f4f7ff;
+  --muted:#98a5bd;
+  --blue:#6ea8ff;
+  --cyan:#5de4d7;
+  --green:#66e3a2;
+  --yellow:#ffd479;
+}
+
+* { box-sizing:border-box; }
+
+body {
+  margin:0;
+  background:radial-gradient(ellipse at 70% -10%,#1a2b50 0,transparent 40%),var(--bg);
+  color:var(--text);
+  font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;
+}
+
+button,input,select { font:inherit; }
+button { cursor:pointer; }
+
+.app { display:flex; min-height:100vh; }
+
+.sidebar {
+  width:250px;
+  background:#0b101c;
+  border-right:1px solid var(--line);
+  padding:24px 16px;
+  display:flex;
+  flex-direction:column;
+  flex-shrink:0;
+}
+
+.brand {
+  display:flex;
+  gap:11px;
+  align-items:center;
+  padding:0 10px 28px;
+}
+
+.brandmark {
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#78aaff,#6c61e8);
+  font-weight:900;
+}
+
+.brandname { font-size:17px; font-weight:850; letter-spacing:1px; }
+.brandtag { color:var(--muted); font-size:10px; letter-spacing:2px; }
+
+.navlabel {
+  font-size:10px;
+  color:#68758e;
+  letter-spacing:1.8px;
+  font-weight:800;
+  padding:12px;
+}
+
+.nav { display:grid; gap:5px; }
+
+.nav button {
+  text-align:left;
+  border:1px solid transparent;
+  color:#9eabc2;
+  background:transparent;
+  border-radius:11px;
+  padding:12px;
+  font-weight:600;
+}
+
+.nav button:hover,.nav button.active {
+  color:white;
+  background:#18243a;
+  border-color:#2c4163;
+}
+
+.sidebottom { margin-top:auto; padding:14px 10px 0; }
+
+.freebox {
+  border:1px solid #263a5b;
+  background:#121d30;
+  padding:14px;
+  border-radius:14px;
+}
+
+.freebox p { color:var(--muted); font-size:12px; }
+
+.main {
+  min-width:0;
+  flex:1;
+  padding:27px clamp(16px,3vw,38px) 40px;
+  max-width:1600px;
+  margin:0 auto;
+  width:100%;
+}
+
+.topbar {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:28px;
+}
+
+.eyebrow {
+  font-size:11px;
+  letter-spacing:1.8px;
+  color:var(--cyan);
+  font-weight:800;
+}
+
+h1 { font-size:clamp(24px,3vw,32px); margin:5px 0; }
+.sub { color:var(--muted); font-size:13px; margin-top:7px; }
+
+.demo-pill {
+  font-size:10px;
+  font-weight:800;
+  color:var(--yellow);
+  border:1px solid #6b542d;
+  background:#2a2114;
+  padding:7px 10px;
+  border-radius:999px;
+}
+
+.avatar {
+  height:38px;
+  width:38px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:#202d45;
+  font-weight:800;
+}
+
+.topright { display:flex; align-items:center; gap:10px; }
+.section { display:none; }
+.section.active { display:block; }
+
+.notice {
+  border:1px solid #554727;
+  background:#241e14;
+  color:#f8d99a;
+  border-radius:12px;
+  padding:12px 14px;
+  font-size:12px;
+  margin-bottom:20px;
+}
+
+.grid { display:grid; gap:15px; }
+.stats { grid-template-columns:repeat(4,minmax(0,1fr)); margin-bottom:22px; }
+
+.card {
+  background:linear-gradient(145deg,#121a2a,#0f1522);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:18px;
+  min-width:0;
+}
+
+.stathead {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.staticon {
+  height:35px;
+  width:35px;
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  background:#1b2a43;
+  color:var(--blue);
+}
+
+.statnum {
+  font-size:29px;
+  font-weight:850;
+  margin-top:15px;
+}
+
+.statfoot { font-size:11px; color:var(--muted); }
+
+.two-col { grid-template-columns:minmax(0,1.35fr) minmax(270px,.85fr); }
+
+.cardtitle {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:16px;
+}
+
+.cardtitle h2 { font-size:15px; margin:0; }
+.muted { color:var(--muted); }
+
+.linkbtn {
+  border:0;
+  background:transparent;
+  color:var(--blue);
+  font-size:12px;
+  font-weight:750;
+}
+
+.project-list { display:grid; gap:10px; }
+
+.project {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px;
+  border:1px solid #253047;
+  background:#0d1421;
+  border-radius:12px;
+}
+
+.projecticon {
+  width:42px;
+  height:42px;
+  flex-shrink:0;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:#1b2b45;
+  font-size:20px;
+}
+
+.projectbody { flex:1; min-width:0; }
+.projectname { font-weight:750; font-size:13px; overflow-wrap:anywhere; }
+.projectmeta { font-size:11px; color:var(--muted); }
+
+.status {
+  font-size:10px;
+  font-weight:800;
+  border-radius:999px;
+  padding:5px 8px;
+  white-space:nowrap;
+}
+
+.status.demo {
+  color:var(--yellow);
+  background:#302617;
+  border:1px solid #574426;
+}
+
+.status.ready {
+  color:var(--green);
+  background:#142b25;
+  border:1px solid #245344;
+}
+
+.activity { display:grid; gap:15px; }
+.activityrow { display:flex; gap:11px; align-items:flex-start; }
+.activityrow b { display:block; font-size:12px; }
+.activityrow span { display:block; font-size:11px; color:var(--muted); }
+
+.dot {
+  width:9px;
+  height:9px;
+  background:var(--blue);
+  border-radius:50%;
+  margin-top:6px;
+  flex-shrink:0;
+}
+
+.quickgrid { grid-template-columns:repeat(3,minmax(0,1fr)); margin-top:16px; }
+
+.quick {
+  border:1px solid var(--line);
+  background:#111a2a;
+  color:var(--text);
+  border-radius:13px;
+  padding:15px;
+  text-align:left;
+}
+
+.quick:hover { border-color:#5579b3; }
+.quick b { display:block; font-size:12px; margin-top:8px; }
+.quick span { color:var(--muted); font-size:11px; }
+
+.pageheading {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:20px;
+}
+
+.pageheading h2 { font-size:20px; margin:0; }
+.pageheading p { color:var(--muted); font-size:12px; }
+
+.primary,.ghost {
+  border:0;
+  border-radius:9px;
+  padding:10px 13px;
+  font-size:12px;
+  font-weight:750;
+}
+
+.primary {
+  background:linear-gradient(135deg,#79aaff,#7770f0);
+  color:white;
+}
+
+.ghost {
+  background:#151e30;
+  border:1px solid #2b3952;
+  color:#d9e4f8;
+}
+
+.cardsgrid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.projectcard { padding:18px; }
+.projecttop { display:flex; justify-content:space-between; align-items:center; }
+.projectcard h3 { font-size:15px; margin:14px 0 4px; }
+.projectcard p { font-size:12px; color:var(--muted); }
+
+.meta-line {
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  border-top:1px solid #263149;
+  padding-top:11px;
+  margin-top:11px;
+  font-size:11px;
+  color:var(--muted);
+}
+
+.actions { display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
+.plan-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.price { font-size:29px; font-weight:850; margin:12px 0; }
+.price small { font-size:11px; color:var(--muted); font-weight:500; }
+
+.features {
+  padding:0;
+  list-style:none;
+  display:grid;
+  gap:10px;
+  color:#c2cce0;
+  font-size:12px;
+}
+
+.features li:before {
+  content:"✓";
+  color:var(--green);
+  margin-right:8px;
+}
+
+.plan-featured { border-color:#607ed2; }
+
+.settingrow {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  padding:15px 0;
+  border-bottom:1px solid #263149;
+}
+
+.settingrow:last-child { border-bottom:0; }
+.settingrow b { display:block; font-size:13px; }
+.settingrow span { color:var(--muted); font-size:11px; }
+
+.toggle {
+  width:42px;
+  height:24px;
+  border-radius:99px;
+  background:#33425d;
+  border:0;
+  padding:3px;
+  flex-shrink:0;
+}
+
+.toggle:after {
+  content:"";
+  display:block;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:white;
+}
+
+.toggle.on { background:#4d7fe3; }
+.toggle.on:after { transform:translateX(18px); }
+
+.footer {
+  color:#66748c;
+  text-align:center;
+  font-size:10px;
+  padding:26px 0 0;
+}
+
+.mobile-nav { display:none; }
+
+.toast {
+  position:fixed;
+  bottom:22px;
+  left:50%;
+  transform:translate(-50%,20px);
+  opacity:0;
+  pointer-events:none;
+  background:#eaf2ff;
+  color:#111a2a;
+  padding:11px 16px;
+  border-radius:10px;
+  font-size:12px;
+  font-weight:750;
+  transition:.25s;
+  z-index:30;
+}
+
+.toast.show {
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+.modalback {
+  position:fixed;
+  inset:0;
+  background:#02040bd9;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  z-index:20;
+}
+
+.modalback.show { display:flex; }
+
+.modal {
+  width:min(430px,100%);
+  background:#121a2a;
+  border:1px solid #33415c;
+  border-radius:17px;
+  padding:22px;
+}
+
+.modal h3 { margin:0 0 6px; }
+.modal p { font-size:12px; color:var(--muted); }
+
+.modal input,.modal select {
+  width:100%;
+  padding:11px 12px;
+  background:#0a101c;
+  color:white;
+  border:1px solid #34415b;
+  border-radius:9px;
+  margin:7px 0 13px;
+}
+
+.modal label { font-size:12px; color:#c3cee1; }
+.modalfoot { display:flex; justify-content:flex-end; gap:8px; }
+
+@media(max-width:1000px) {
+  .stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .two-col { grid-template-columns:1fr; }
+  .plan-grid,.cardsgrid { grid-template-columns:1fr; }
+}
+
+@media(max-width:650px) {
+  .sidebar { display:none; }
+  .main { padding:20px 14px 94px; }
+  .topbar { align-items:flex-start; margin-bottom:22px; }
+  .demo-pill { font-size:9px; padding:6px 8px; }
+  .avatar { width:33px; height:33px; }
+  .stats { gap:10px; }
+  .card { padding:14px; }
+  .statnum { font-size:25px; }
+  .quickgrid { grid-template-columns:1fr 1fr; }
+  .quick:last-child { grid-column:span 2; }
+  .pageheading { align-items:flex-start; }
+  .mobile-nav {
+    position:fixed;
+    z-index:8;
+    bottom:0;
+    left:0;
+    right:0;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    background:#0b101cf5;
+    border-top:1px solid #29344a;
+    padding:8px 5px calc(8px + env(safe-area-inset-bottom));
+  }
+  .mobile-nav button {
+    border:0;
+    background:transparent;
+    color:#8795ae;
+    font-size:9px;
+    display:grid;
+    justify-items:center;
+    gap:4px;
+    padding:5px 0;
+  }
+  .mobile-nav button span { font-size:17px; }
+  .mobile-nav button.active { color:#8bb6ff; }
+  .settingrow { align-items:flex-start; }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brandmark">Z</div>
+    <div>
+      <div class="brandname">ZEROX NET</div>
+      <div class="brandtag">CLOUD CONTROL</div>
+    </div>
+  </div>
+
+  <div class="navlabel">WORKSPACE</div>
+  <nav class="nav">
+    <button class="active" data-page="dashboard">▦ Dashboard</button>
+    <button data-page="websites">◎ Websites</button>
+    <button data-page="bots">⌘ Telegram Bots</button>
+    <button data-page="plans">◇ Plans</button>
+    <button data-page="settings">⚙ Settings</button>
+  </nav>
+
+  <div class="sidebottom">
+    <div class="freebox">
+      <b>✦ Starter workspace</b>
+      <p>Explore the interface using sample demo projects.</p>
+      <button class="primary" data-goto="plans">Explore plans ↗</button>
+    </div>
+    <div class="footer">ZEROX NET · FRONTEND DEMO</div>
+  </div>
+</aside>
+
+<main class="main">
+  <header class="topbar">
+    <div>
+      <div class="eyebrow" id="eyebrow">OVERVIEW / WORKSPACE</div>
+      <h1 id="pageTitle">Your command center.</h1>
+      <div class="sub" id="pageSub">Manage your projects from one simple dashboard.</div>
+    </div>
+    <div class="topright">
+      <span class="demo-pill">● DEMO MODE</span>
+      <div class="avatar">ZX</div>
+    </div>
+  </header>
+
+  <!-- DASHBOARD -->
+  <section class="section active" id="page-dashboard">
+    <div class="notice">
+      ⚠ Demo dashboard only. Projects and usage are sample data.
+      No website or Telegram bot is being hosted by this page.
+    </div>
+
+    <div class="grid stats">
+      <div class="card">
+        <div class="stathead">Websites <span class="staticon">◎</span></div>
+        <div class="statnum" id="websiteCount">2</div>
+        <div class="statfoot">Sample projects</div>
+      </div>
+      <div class="card">
+        <div class="stathead">Telegram bots <span class="staticon">⌘</span></div>
+        <div class="statnum" id="botCount">2</div>
+        <div class="statfoot">Sample projects</div>
+      </div>
+      <div class="card">
+        <div class="stathead">Storage used <span class="staticon">▤</span></div>
+        <div class="statnum">128 <small>MB</small></div>
+        <div class="statfoot">Illustrative demo value</div>
+      </div>
+      <div class="card">
+        <div class="stathead">Workspace status <span class="staticon">✦</span></div>
+        <div class="statnum" style="font-size:22px;color:var(--yellow)">Demo</div>
+        <div class="statfoot">Runtime not connected</div>
+      </div>
+    </div>
+
+    <div class="grid two-col">
+      <div class="card">
+        <div class="cardtitle">
+          <h2>Recent projects</h2>
+          <button class="linkbtn" data-goto="websites">View websites →</button>
+        </div>
+        <div class="project-list">
+          <div class="project">
+            <div class="projecticon">🌐</div>
+            <div class="projectbody">
+              <div class="projectname">portfolio-site</div>
+              <div class="projectmeta">Website · Sample project</div>
+            </div>
+            <span class="status demo">DEMO</span>
+          </div>
+          <div class="project">
+            <div class="projecticon">🛍️</div>
+            <div class="projectbody">
+              <div class="projectname">store-landing</div>
+              <div class="projectmeta">Website · Sample project</div>
+            </div>
+            <span class="status demo">DEMO</span>
+          </div>
+          <div class="project">
+            <div class="projecticon">🤖</div>
+            <div class="projectbody">
+              <div class="projectname">helper-bot</div>
+              <div class="projectmeta">Runtime not connected</div>
+            </div>
+            <span class="status demo">DEMO</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardtitle">
+          <h2>Activity feed</h2>
+          <span class="status demo">SAMPLE</span>
+        </div>
+        <div class="activity">
+          <div class="activityrow">
+            <span class="dot"></span>
+            <div><b>Workspace created</b><span>Sample activity only</span></div>
+          </div>
+          <div class="activityrow">
+            <span class="dot"></span>
+            <div><b>Website project added</b><span>Example project card</span></div>
+          </div>
+          <div class="activityrow">
+            <span class="dot"></span>
+            <div><b>Bot runtime pending</b><span>Backend not connected</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid quickgrid">
+      <button class="quick" data-goto="websites">
+        <span>＋</span><b>Add a website</b>
+        <span>Create a demo project card</span>
+      </button>
+      <button class="quick" data-goto="bots">
+        <span>⌘</span><b>Set up a bot</b>
+        <span>Preview bot settings</span>
+      </button>
+      <button class="quick" data-goto="plans">
+        <span>◇</span><b>Compare plans</b>
+        <span>See example plans</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- WEBSITES -->
+  <section class="section" id="page-websites">
+    <div class="notice">
+      Demo action: adding a project changes this page only.
+      It does not upload or deploy files.
+    </div>
+
+    <div class="pageheading">
+      <div><h2>Your websites</h2><p>Sample website projects.</p></div>
+      <button class="primary" id="addWebsite">＋ Add website</button>
+    </div>
+
+    <div class="grid cardsgrid" id="websiteProjects">
+      <article class="card projectcard">
+        <div class="projecttop">
+          <div class="projecticon">🌐</div>
+          <span class="status demo">DEMO</span>
+        </div>
+        <h3>portfolio-site</h3>
+        <p>A sample personal portfolio landing page.</p>
+        <div class="meta-line"><span>Type</span><span>Static HTML</span></div>
+        <div class="meta-line"><span>Deploy status</span><span>Not deployed</span></div>
+        <div class="actions">
+          <button class="ghost demo-info">Project details</button>
+          <button class="ghost demo-info">View logs</button>
+        </div>
+      </article>
+
+      <article class="card projectcard">
+        <div class="projecttop">
+          <div class="projecticon">🛍️</div>
+          <span class="status demo">DEMO</span>
+        </div>
+        <h3>store-landing</h3>
+        <p>A sample product showcase page.</p>
+        <div class="meta-line"><span>Type</span><span>Static HTML</span></div>
+        <div class="meta-line"><span>Deploy status</span><span>Not deployed</span></div>
+        <div class="actions">
+          <button class="ghost demo-info">Project details</button>
+          <button class="ghost demo-info">View logs</button>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- TELEGRAM BOTS -->
+  <section class="section" id="page-bots">
+    <div class="notice">
+      Safety note: this demo never asks for Telegram bot tokens.
+      Real hosting needs a secure backend and isolated runtime.
+    </div>
+
+    <div class="pageheading">
+      <div><h2>Telegram bots</h2><p>No bots are running.</p></div>
+      <button class="primary" id="addBot">＋ Add bot</button>
+    </div>
+
+    <div class="grid cardsgrid" id="botProjects">
+      <article class="card projectcard">
+        <div class="projecttop">
+          <div class="projecticon">🤖</div>
+          <span class="status demo">DEMO</span>
+        </div>
+        <h3>helper-bot</h3>
+        <p>A sample Telegram helper bot project.</p>
+        <div class="meta-line"><span>Runtime</span><span>Not connected</span></div>
+        <div class="meta-line"><span>Uptime</span><span>Not running</span></div>
+        <div class="actions">
+          <button class="ghost demo-info">View logs</button>
+          <button class="ghost demo-info">Configure</button>
+        </div>
+      </article>
+
+      <article class="card projectcard">
+        <div class="projecttop">
+          <div class="projecticon">📣</div>
+          <span class="status demo">DEMO</span>
+        </div>
+        <h3>updates-bot</h3>
+        <p>A sample announcements bot project.</p>
+        <div class="meta-line"><span>Runtime</span><span>Not connected</span></div>
+        <div class="meta-line"><span>Uptime</span><span>Not running</span></div>
+        <div class="actions">
+          <button class="ghost demo-info">View logs</button>
+          <button class="ghost demo-info">Configure</button>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- PLANS -->
+  <section class="section" id="page-plans">
+    <div class="notice">
+      Example plans only. No payments or subscriptions are connected.
+    </div>
+
+    <div class="pageheading">
+      <div><h2>Simple, transparent plans</h2><p>Example pricing for a future launch.</p></div>
+    </div>
+
+    <div class="grid plan-grid">
+      <div class="card">
+        <span class="status ready">START HERE</span>
+        <h3>Free</h3>
+        <div class="price">₹0 <small>/ month</small></div>
+        <p class="muted">For learning and testing.</p>
+        <ul class="features">
+          <li>Demo dashboard</li>
+          <li>Sample project cards</li>
+          <li>Community documentation</li>
+          <li>No runtime yet</li>
+        </ul>
+        <button class="ghost" data-plan="Free">Selected demo plan</button>
+      </div>
+
+      <div class="card plan-featured">
+        <span class="status demo">SAMPLE</span>
+        <h3>Starter</h3>
+        <div class="price">₹199 <small>/ month*</small></div>
+        <p class="muted">Illustrative future plan.</p>
+        <ul class="features">
+          <li>Website deployment concept</li>
+          <li>Bot management concept</li>
+          <li>Usage dashboard concept</li>
+          <li>Backend not connected</li>
+        </ul>
+        <button class="primary" data-plan="Starter">Preview plan</button>
+      </div>
+
+      <div class="card">
+        <span class="status demo">SAMPLE</span>
+        <h3>Pro</h3>
+ 
